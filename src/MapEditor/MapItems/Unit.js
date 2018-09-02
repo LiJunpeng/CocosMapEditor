@@ -66,6 +66,32 @@ var Unit = cc.Scale9Sprite.extend({
         this.mapY = mapY;
     },
 
+    turn: function (direction) {
+        let nextDir;
+        switch (direction) {
+            case DIRECTION.back:
+            case "back":
+                nextDir = (this.facing + 2) % 4;
+                break;
+
+            case DIRECTION.LEFT:
+            case "left":
+                nextDir = (this.facing + 3) % 4;
+                break;
+
+            case DIRECTION.RIGHT:
+            case "right":
+                nextDir = (this.facing + 1) % 4;
+                break;    
+                
+            default:
+                return;
+                break;  
+        }
+
+        this.turnToDirection(nextDir);
+    },
+
     turnToDirection: function (direction) {
         switch (direction) {
             case DIRECTION.UP:
@@ -146,7 +172,9 @@ var Unit = cc.Scale9Sprite.extend({
         var f = aether.createFunction();
 
         try {
-            var gen = f.apply(this);
+            // var gen = f.apply(this);
+            this.functionList.commandSequence.length = 0;
+            var gen = f.apply(this.functionList);
 
         } catch (err) {
             var error = err.toString();
@@ -160,6 +188,8 @@ var Unit = cc.Scale9Sprite.extend({
 
             return;
         }
+
+        this.commandSequence = this.functionList.commandSequence;
 
 // =====================
 
@@ -177,19 +207,23 @@ var Unit = cc.Scale9Sprite.extend({
     },
 
     // function list
-    move: function (distance) {
-        // cc.log("i'm moving!" + distance);
-        this.commandSequence.push({
-            func: "do_move",
-            arguments: [distance]
-        });
-    },
+    functionList: {
+        commandSequence: [],
 
-    turn: function (direction) {
-        this.commandSequence.push({
-            func: "do_turn",
-            arguments: [direction]
-        });
+        move: function (distance) {
+            // cc.log("i'm moving!" + distance);
+            this.commandSequence.push({
+                func: "do_move",
+                arguments: [distance]
+            });
+        },
+
+        turn: function (direction) {
+            this.commandSequence.push({
+                func: "do_turn",
+                arguments: [direction]
+            });
+        },
     },
 
     // function implementation
@@ -200,7 +234,8 @@ var Unit = cc.Scale9Sprite.extend({
 
     do_turn: function (direction) {
         cc.log("action: turn " + direction);
-        this.turnToDirection(direction);
+        // this.turnToDirection(direction);
+        this.turn(direction);
     }
 
 });

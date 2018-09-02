@@ -3,9 +3,16 @@ var res = {
 
     editor_layer_bg : "res/Background/editor_layer_bg.png",
     map_layer_bg : "res/Background/map_layer_bg.png",
+    map_layer_item_menu_bg : "res/Background/map_layer_item_menu_bg.png", 
 
     run_code_normal : "res/UI/run_code_normal.png",
     run_code_pressed : "res/UI/run_code_pressed.png",
+
+    menu_item_selected_bg :"res/UI/menu_item_selected_bg.png",
+    menu_item_normal_bg : "res/UI/menu_item_normal_bg.png",
+    menu_item_floor_1 : "res/MenuItems/floor_1.png",
+    menu_item_unit_1 : "res/MenuItems/unit_1.png",
+    menu_item_mouse : "res/MenuItems/mouse.png",
 
     map_tile_empty : "res/MapTiles/map_tile_empty.png",
     movable_item : "res/MapTiles/movable_item.png",

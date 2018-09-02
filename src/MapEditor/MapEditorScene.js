@@ -70,18 +70,18 @@ var MapEditorScene = cc.Scene.extend({
 
 
 
-		this.mapLayer.createEmptyMap(10, 10);
+		this.mapLayer.createEmptyMap(14, 14);
 		// this.mapLayer.mapContainer.placeItem(3, 3, new MovableItem());
-		for (let i = 2; i < 8; i++) {
-			for (let j = 2; j < 8; j++) {
-				this.mapLayer.mapContainer.placeItem(j, i, new MovableItem());
-			}
-		}
+		// for (let i = 2; i < 8; i++) {
+		// 	for (let j = 2; j < 8; j++) {
+		// 		this.mapLayer.mapContainer.placeItem(j, i, new MovableItem());
+		// 	}
+		// }
 
-		let unit = new Unit();
-		this.mapLayer.mapContainer.placeUnit(3, 5, unit);
-		unit.setCode("move(1)\nturn('right')\nmove(1)");
-		unit.turnToDirection(DIRECTION.UP);
+		// let unit = new Unit();
+		// this.mapLayer.mapContainer.placeUnit(3, 5, unit);
+		// unit.setCode("move(1)\nturn('left')\nmove(1)");
+		// unit.turnToDirection(DIRECTION.UP);
 
 	},
 

@@ -13,11 +13,15 @@
 
     "jsList" : [
         "src/load_config.js",
+        "src/item_config.js",
         "src/app.js",
 
         "src/MapEditor/MapEditorScene.js",
+
         "src/MapEditor/EditorLayer.js",
         "src/MapEditor/MapLayer.js",
+        "src/MapEditor/ItemMenu.js",
+
         "src/MapEditor/MapTile.js",
         "src/MapEditor/MapItems/MovableItem.js",
         "src/MapEditor/MapItems/Unit.js"

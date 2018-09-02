@@ -1,7 +1,7 @@
 var MapLayer = ccui.Layout.extend({
 
 	mapContainer: null,
-
+	itemMenu: null,
 
 	ctor: function () {
 		this._super();
@@ -22,6 +22,21 @@ var MapLayer = ccui.Layout.extend({
 		this.setBackGroundImage(config.backgroundRes);
 		this.setBackGroundImageScale9Enabled(true);
 
+		// init item menu
+		let itemMenu = new ItemMenu({
+			anchorX: 0,
+			anchorY: 0,
+			x: 0,
+			y: 0,
+			width:200,
+			height: this.height,
+			backgroundRes: res.map_layer_item_menu_bg
+		});
+		itemMenu.loadItems(ITEM_CONFIG);
+		this.itemMenu = itemMenu;
+		this.addChild(itemMenu, 3);
+
+
 	},
 
 	onEnter: function() {
@@ -40,7 +55,7 @@ var MapLayer = ccui.Layout.extend({
 			colNum: colNum,
 			anchorX: 0,
 			anchorY: 0,
-			x: 200,
+			x: 400,
 			y: 200,
 			width: 600,
 			height: 600
