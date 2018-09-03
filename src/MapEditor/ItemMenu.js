@@ -50,12 +50,12 @@ var ItemMenu = ccui.Layout.extend({
 		for (let i = 0; i < items.length; i++) {
 			let item = new menuItem(items[i]);
 			item.attr({
-				width: this.width - 20,
-				height: this.width - 20,
+				width: this.scrollView.width,
+				height: this.scrollView.width,
 				anchorX: 0.5,
 				anchorY: 0.5,
-				x: this.width / 2,
-				y: i * this.width + 20
+				x: this.scrollView.width / 2,
+				y: i * this.scrollView.width + 20
 			});
 			this.scrollView.addChild(item);
 		}
@@ -97,10 +97,10 @@ var menuItem = cc.Layer.extend({
 
     	let iconSprite = new cc.Scale9Sprite(res[this.item.res]);
     	iconSprite.attr({
-    		anchorX: 0.5,
-    		anchorY: 0.5,
-    		x: this.width / 2,
-    		y: this.height / 2,
+    		anchorX: 0,
+    		anchorY: 0,
+    		x: 0,
+    		y: 0,
     		width: this.width - 20,
     		height: this.height - 20
     	});
