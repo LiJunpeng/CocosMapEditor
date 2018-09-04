@@ -144,6 +144,10 @@ var EditorLayer = ccui.Layout.extend({
 
 	},
 
+	getCode: function () {
+		return this.editBox.string;
+	},
+
 	onExit: function () {
 		this._super;
 		// cc.eventManager.removeListeners(cc.EventListener.KEYBOARD);

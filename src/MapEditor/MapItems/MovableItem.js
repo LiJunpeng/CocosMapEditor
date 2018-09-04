@@ -1,7 +1,12 @@
 var MovableItem = cc.Scale9Sprite.extend({
 
-    ctor: function () {
+    itemConfig: null,
+
+    ctor: function (itemConfig) {
         this._super(res.movable_item);
+
+        this.setName("MovableItem");
+        this.itemConfig = itemConfig;
 
     },
 

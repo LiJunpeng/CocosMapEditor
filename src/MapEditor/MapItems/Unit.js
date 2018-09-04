@@ -1,5 +1,7 @@
 var Unit = cc.Scale9Sprite.extend({
 
+    itemConfig: null,
+
     unitId: -1,
     map: null,
     mapX: 0,
@@ -12,8 +14,11 @@ var Unit = cc.Scale9Sprite.extend({
     isRunning: false,
     isExecuting: false,
 
-    ctor: function () {
+    ctor: function (itemConfig) {
         this._super(res.unit);
+
+        this.setName("Unit");
+        this.itemConfig = itemConfig;
 
         this.scheduleUpdate();
     },

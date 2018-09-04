@@ -23,6 +23,13 @@ var MapTile = cc.Scale9Sprite.extend({
         this.mapY = mapY;
     },
 
+    getMapPos: function () {
+        return {
+            mapX: this.mapX,
+            mapY: this.mapY
+        };
+    },
+
     placeItem: function (item) {
         if (this.item) {
             this.deleteItem();

@@ -8,8 +8,8 @@ var res = {
     run_code_normal : "res/UI/run_code_normal.png",
     run_code_pressed : "res/UI/run_code_pressed.png",
 
-    menu_item_selected_bg :"res/UI/menu_item_selected_bg.png",
-    menu_item_normal_bg : "res/UI/menu_item_normal_bg.png",
+    menu_item_bg_selected :"res/UI/menu_item_selected_bg.png",
+    menu_item_bg_normal : "res/UI/menu_item_normal_bg.png",
     menu_item_floor_1 : "res/MenuItems/floor_1.png",
     menu_item_unit_1 : "res/MenuItems/unit_1.png",
     menu_item_mouse : "res/MenuItems/mouse.png",

@@ -2,6 +2,8 @@ var ItemMenu = ccui.Layout.extend({
 
 	scrollView: null,
 
+	itemSelected: null,
+
 	ctor: function (config) {
 		this._super();
 
@@ -52,9 +54,9 @@ var ItemMenu = ccui.Layout.extend({
 			item.attr({
 				width: this.scrollView.width,
 				height: this.scrollView.width,
-				anchorX: 0.5,
-				anchorY: 0.5,
-				x: this.scrollView.width / 2,
+				anchorX: 0,
+				anchorY: 0,
+				x: 0,
 				y: i * this.scrollView.width + 20
 			});
 			this.scrollView.addChild(item);
@@ -63,10 +65,84 @@ var ItemMenu = ccui.Layout.extend({
  
         this.scrollView.jumpToTop();
 
+        // cc.log(this.scrollView);
+
+	},
+
+	onMouseDown: function (e) {
+		// cc.log("mouse down");
+		// cc.log(e.getLocation());
+		// cc.log(this.convertToNodeSpace(e.getLocation()));
+
+		for (var item of this.scrollView.getChildren()) {
+			if (cc.rectContainsPoint(
+					item.getBoundingBox(), 
+					this.convertToNodeSpace(e.getLocation())
+				)) {
+				// cc.log(item.getName());
+
+				if (this.itemSelected) {
+					this.itemSelected.select(false);
+				}
+
+				item.onMouseDown();
+				this.itemSelected = item;
+				cc.log("selected item: " + this.itemSelected.getName());
+
+				return;
+			}
+		}
 
 
 	},
 
+	onMouseUp: function (e) {
+		// cc.log("mouse up");
+	},
+
+	onMouseMove: function (e) {
+		// cc.log("mouse move");
+	},
+
+	onMouseScroll: function(e) {
+		// cc.log("mouse scroll");
+	},
+
+	getSelectedItemInstance: function () {
+		if (this.itemSelected == null) {
+			return;
+		}
+
+		let itemConfig = this.itemSelected.item;
+		// cc.log(itemConfig);
+
+		switch (itemConfig.type) {
+			case ITEM_TYPE.NONE:
+				return null;
+				break;
+
+			case ITEM_TYPE.UNIT:
+				return this.buildUnit(itemConfig);
+				break;
+
+			case ITEM_TYPE.MOVABLE_TILE:
+				return this.buildMovableTile(itemConfig);
+				break;
+
+			default:
+				return null;
+				break;
+		}
+
+	},
+
+	buildUnit: function (itemConfig) {
+		return new Unit(itemConfig);
+	},
+
+	buildMovableTile: function (itemConfig) {
+		return new MovableItem(itemConfig);
+	},
 
 	onExit: function () {
 		this._super;
@@ -81,13 +157,13 @@ var menuItem = cc.Layer.extend({
 	bgSprite: null,
 	iconSprite: null,
 
+	isSelected: false,
+
     ctor:function (item) {
         this._super();
 
         this.item = item;
-        let bgSprite = new cc.Scale9Sprite(res.menu_item_normal_bg);
-        this.bgSprite = bgSprite;
-        this.addChild(bgSprite, 0);
+        this.setName(item.name);
 
         return true;
     },
@@ -95,17 +171,65 @@ var menuItem = cc.Layer.extend({
     onEnter: function () {
     	this._super();
 
+        let bgSprite = new cc.Scale9Sprite(res.menu_item_bg_normal);
+        bgSprite.attr({
+    		anchorX: 0.5,
+    		anchorY: 0.5,
+    		x: this.width / 2,
+    		y: this.height / 2,
+    		width: this.width - 20,
+    		height: this.height - 20 	
+        });
+        this.bgSprite = bgSprite;
+        this.addChild(bgSprite, 0);
+
     	let iconSprite = new cc.Scale9Sprite(res[this.item.res]);
     	iconSprite.attr({
-    		anchorX: 0,
-    		anchorY: 0,
-    		x: 0,
-    		y: 0,
-    		width: this.width - 20,
-    		height: this.height - 20
+    		anchorX: 0.5,
+    		anchorY: 0.5,
+    		x: this.width / 2,
+    		y: this.height / 2,
+    		width: 150,
+    		height: 150
     	});
     	this.iconSprite = iconSprite;
     	this.addChild(iconSprite, 1);
+    },
+
+    onMouseDown: function (e) {
+    	if (this.isSelected) {
+    		this.select(false);
+    	} else {
+    		this.select(true);
+    	}
+    },
+
+    select: function (b) {
+    	this.removeChild(this.bgSprite);
+
+		let bgSprite;
+    	if (b) {
+    		this.isSelected = true;
+    		bgSprite = new cc.Scale9Sprite(res.menu_item_bg_selected);
+    	} else {
+    		this.isSelected = false;
+    		bgSprite = new cc.Scale9Sprite(res.menu_item_bg_normal);
+    	}
+
+        bgSprite.attr({
+    		anchorX: 0.5,
+    		anchorY: 0.5,
+    		x: this.width / 2,
+    		y: this.height / 2,
+    		width: this.width - 20,
+    		height: this.height - 20 	
+        });
+        this.bgSprite = bgSprite;
+        this.addChild(bgSprite, 0);
+    },
+
+    unselect: function () {
+
     },
 
     onExit: function() {

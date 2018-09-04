@@ -65,6 +65,13 @@ var MapEditorScene = cc.Scene.extend({
 		// bind event listener
         cc.eventManager.addCustomListener(MAP_EDITOR_SCENE_EVENT.RUN_MAP, function (event) {
             cc.log("Event: run map");
+
+			// inject code to unit, test only
+			for (let unit of this.mapLayer.mapContainer.units) {
+				unit.setCode(this.editorLayer.getCode());
+				cc.log(unit.getCode());
+			}
+
             this.mapLayer.runMap();
         }.bind(this));
 

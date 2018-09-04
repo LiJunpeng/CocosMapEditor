@@ -3,6 +3,8 @@ var MapLayer = ccui.Layout.extend({
 	mapContainer: null,
 	itemMenu: null,
 
+	mouseListener: null,
+
 	ctor: function () {
 		this._super();
 
@@ -42,6 +44,17 @@ var MapLayer = ccui.Layout.extend({
 	onEnter: function() {
 		this._super();
 
+		// bind mouse
+	    let mouseListener = cc.EventListener.create({
+        	event   : cc.EventListener.MOUSE,
+        	target  : this,
+        	onMouseDown : this.onMouseDown,
+        	onMouseUp : this.onMouseUp,
+        	onMouseMove : this.onMouseMove,
+        	onMouseScroll : this.onMouseScroll
+    	});
+    	this.mouseListener = mouseListener;
+    	cc.eventManager.addListener(mouseListener, this);
 	},
 
 	createEmptyMap: function (rowNum, colNum) {
@@ -71,13 +84,61 @@ var MapLayer = ccui.Layout.extend({
 		}
 	},
 
+	onMouseDown: function (e) {
+		// cc.log("mouse down");
+		let target = e.getCurrentTarget();
+		if (!cc.rectContainsPoint(target.getBoundingBox(), e.getLocation())) {
+			return;
+		}
+
+		if (cc.rectContainsPoint(target.itemMenu.getBoundingBox(), e.getLocation())) {
+			// cc.log("menu");
+			target.itemMenu.onMouseDown(e);
+		} else if (cc.rectContainsPoint(target.mapContainer.getBoundingBox(), e.getLocation())) {
+			// get mapX and mapY
+			const clickPos = target.mapContainer.getMapPosByCoord(e.getLocation());
+
+			if (target.itemMenu.itemSelected) {
+				// cc.log(target.itemMenu.itemSelected.item.id);
+				// let itemConfig = target.itemMenu.itemSelected.item;
+				let item = target.itemMenu.getSelectedItemInstance();
+				if (item) {
+					if (item.itemConfig.type == ITEM_TYPE.UNIT) {
+						target.mapContainer.placeUnit(clickPos.mapX, clickPos.mapY, item);
+					} else if (item.itemConfig.type == ITEM_TYPE.MOVABLE_TILE) {
+						target.mapContainer.placeItem(clickPos.mapX, clickPos.mapY, item);
+					}
+				}
+			}
+
+		} else {
+			// cc.log("other");
+		}
+	},
+
+	onMouseUp: function (e) {
+		// cc.log("mouse up");
+	},
+
+	onMouseMove: function (e) {
+		// cc.log("mouse move");
+	},
+
+	onMouseScroll: function(e) {
+		// cc.log("mouse scroll");
+	},
+
 	onExit: function () {
 		this._super;
 	
 		cc.log("Leave UILayer");
+
+	 	cc.eventManager.removeListener(this.mouseListener);
 	}
 });
 
+
+// map container class
 var MapContainer = cc.Layer.extend({
 
 	rowNum: 0,
@@ -151,6 +212,21 @@ var MapContainer = cc.Layer.extend({
 		}
 	},
 
+	getMapPosByCoord: function (pos) {
+		// cc.log(pos);
+
+		for (let row = 0; row < this.tiles.length; row++) {
+			for (let col = 0; col < this.tiles[0].length; col++) {
+				const tile = this.tiles[row][col];
+				if (cc.rectContainsPoint(tile.getBoundingBox(), this.convertToNodeSpace(pos))) {
+					return tile.getMapPos();
+				}
+			}
+		}
+
+		return null;
+	},
+
 	getTileByXY: function (mapX, mapY) {
 		if (mapY >= this.rowNum || mapY < 0 || mapX >= this.colNum || mapX < 0) {
 			return null;
@@ -160,7 +236,7 @@ var MapContainer = cc.Layer.extend({
 	},
 
 	placeUnit: function (mapX, mapY, unit) {
-		if (mapY >= this.rowNum || mapY < 0 || mapX >= this.colNum || mapX < 0) {
+		if (mapY >= this.rowNum || mapY < 0 || mapX >= this.colNum || mapX < 0 || this.getTileByXY(mapX, mapY).item == null) {
 			return;
 		} 
 
