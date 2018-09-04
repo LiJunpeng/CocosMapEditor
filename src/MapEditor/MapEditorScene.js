@@ -11,8 +11,10 @@ var MAP_EDITOR_SCENE_EVENT = {
 };
 
 var MapEditorScene = cc.Scene.extend({
+
 	mapLayer: null,
 	editorLayer: null,
+	uiLayer: null,
 
 	ctor: function () {
 		this._super();
@@ -26,6 +28,20 @@ var MapEditorScene = cc.Scene.extend({
 	init: function () {
 		const winWidth = cc.winSize.width;
 		const winHeight = cc.winSize.height;
+
+		// init UILayer
+		let uiLayer = new UILayer();
+		uiLayer.setup({
+			anchorX: 0,
+			anchorY: 1,
+			x: 0,
+			y: 1080,
+			width: 1920,
+			height: 100,
+			backgroundRes: res.editor_layer_bg
+		});
+		this.addChild(uiLayer, 2, 2);
+		this.uiLayer = uiLayer;
 
 		// init MapLayer
 		let mapLayer = new MapLayer();

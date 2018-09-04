@@ -21,6 +21,7 @@
         "src/MapEditor/EditorLayer.js",
         "src/MapEditor/MapLayer.js",
         "src/MapEditor/ItemMenu.js",
+        "src/MapEditor/UILayer.js",
 
         "src/MapEditor/MapTile.js",
         "src/MapEditor/MapItems/MovableItem.js",
