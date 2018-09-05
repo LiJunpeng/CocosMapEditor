@@ -129,6 +129,10 @@ var ItemMenu = ccui.Layout.extend({
 				return this.buildMovableTile(itemConfig);
 				break;
 
+			case ITEM_TYPE.ITEM_SPRITE:
+				return this.buildItemSprite(itemConfig);
+				break;
+
 			default:
 				return null;
 				break;
@@ -142,6 +146,10 @@ var ItemMenu = ccui.Layout.extend({
 
 	buildMovableTile: function (itemConfig) {
 		return new MovableItem(itemConfig);
+	},
+
+	buildItemSprite: function (itemConfig) {
+		return new ItemSprite(itemConfig);
 	},
 
 	onExit: function () {

@@ -29,29 +29,49 @@ var UILayer = ccui.Layout.extend({
 
 
         // // init start button
-        // let menuItemRunCode = new cc.MenuItemImage(
-        // 	res.run_code_normal,
-        // 	res.run_code_pressed,
-        // 	this.runMap,
-        // 	this
-        // );
-        // menuItemRunCode.attr({
-        // 	anchorX: 0,
-        // 	anchorY: 0,
-        // 	x: 150,
-        // 	y: 0
-        // });
-        // this.menuItemRunCode = menuItemRunCode;
+        let menuItemRunCode = new cc.MenuItemImage(
+        	res.run_code_normal,
+        	res.run_code_pressed,
+        	this.runMap,
+        	this
+        );
+        menuItemRunCode.attr({
+        	anchorX: 0,
+        	anchorY: 0,
+        	x: 1920 - 200,
+        	y: 0
+        });
+        this.menuItemRunCode = menuItemRunCode;
 
-        // let editorMenu = new cc.Menu(this.menuItemRunCode);
-        // editorMenu.attr({
-        // 	anchorX: 0,
-        // 	anchorY: 0,
-        // 	x: 0,
-        // 	y: 0
-        // });
-        // this.addChild(editorMenu, 2);
+        // init reset button
+        let menuItemResetMap = new cc.MenuItemImage(
+        	res.reset_map_normal,
+        	res.reset_map_pressed,
+        	this.resetMap,
+        	this
+        );
+        menuItemResetMap.attr({
+        	anchorX: 0,
+        	anchorY: 0,
+        	x: 1920 - 400,
+        	y: 0
+        });
+        this.menuItemResetMap = menuItemResetMap;
 
+        let menu = new cc.Menu(
+        	this.menuItemRunCode, 
+        	this.menuItemResetMap
+        );
+        menu.attr({
+        	anchorX: 0,
+        	anchorY: 0,
+        	x: 0,
+        	y: 0,
+        	width: 1920,
+        	height: 100
+        });
+        this.addChild(menu, 2);
+        this.menu = menu;
 
 	},
 
@@ -60,6 +80,15 @@ var UILayer = ccui.Layout.extend({
 		cc.log("Enter UILayer");
 	},
 
+	runMap: function () {
+		const eventRunMap = new cc.EventCustom(MAP_EDITOR_SCENE_EVENT.RUN_MAP);
+		cc.eventManager.dispatchEvent(eventRunMap);
+	},
+
+	resetMap: function () {
+		const eventResetMap = new cc.EventCustom(MAP_EDITOR_SCENE_EVENT.RESET_MAP);
+		cc.eventManager.dispatchEvent(eventResetMap);
+	},
 
 
 	onExit: function () {

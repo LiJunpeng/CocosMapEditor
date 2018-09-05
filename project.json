@@ -25,6 +25,7 @@
 
         "src/MapEditor/MapTile.js",
         "src/MapEditor/MapItems/MovableItem.js",
-        "src/MapEditor/MapItems/Unit.js"
+        "src/MapEditor/MapItems/Unit.js",
+        "src/MapEditor/MapItems/ItemSprite.js"
     ]
 }

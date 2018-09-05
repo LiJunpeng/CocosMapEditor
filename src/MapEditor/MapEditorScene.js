@@ -7,7 +7,8 @@ DIRECTION = {
 
 
 var MAP_EDITOR_SCENE_EVENT = {
-    RUN_MAP: "MAP_EDITOR_SCENE_EVENT_RUN_MAP"
+    RUN_MAP: "MAP_EDITOR_SCENE_EVENT_RUN_MAP",
+    RESET_MAP: "MAP_EDITOR_SCENE_EVENT_RESET_MAP"
 };
 
 var MapEditorScene = cc.Scene.extend({
@@ -51,7 +52,7 @@ var MapEditorScene = cc.Scene.extend({
 			x: 10,
 			y: 10,
 			width: 1920 - 400 - 10 * 2,
-			height: 1080 - 10 * 2,
+			height: 1080 - 10 * 2 - 100,
 			backgroundRes: res.map_layer_bg
 		});
 		this.addChild(mapLayer, 1, 0);
@@ -65,7 +66,7 @@ var MapEditorScene = cc.Scene.extend({
 			x: winWidth,
 			y: 0,
 			width: 400,
-			height: winHeight,
+			height: winHeight - 100,
 			backgroundRes: res.editor_layer_bg
 		});
 		this.addChild(editorLayer, 1, 1);
@@ -89,6 +90,14 @@ var MapEditorScene = cc.Scene.extend({
 			}
 
             this.mapLayer.runMap();
+        }.bind(this));
+
+		// bind event listener
+        cc.eventManager.addCustomListener(MAP_EDITOR_SCENE_EVENT.RESET_MAP, function (event) {
+            cc.log("Event: reset map");
+
+            this.mapLayer.resetMap();
+
         }.bind(this));
 
 
@@ -117,7 +126,7 @@ var MapEditorScene = cc.Scene.extend({
 
 		// unbind event
 		cc.eventManager.removeCustomListeners(MAP_EDITOR_SCENE_EVENT.RUN_MAP);
-
+		cc.eventManager.removeCustomListeners(MAP_EDITOR_SCENE_EVENT.RESET_MAP);
 	}
 });
 

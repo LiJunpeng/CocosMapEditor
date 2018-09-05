@@ -19,6 +19,7 @@ var Unit = cc.Scale9Sprite.extend({
 
         this.setName("Unit");
         this.itemConfig = itemConfig;
+        this.initFunctionList();
 
         this.scheduleUpdate();
     },
@@ -147,9 +148,9 @@ var Unit = cc.Scale9Sprite.extend({
 
         var aether = new Aether(aetherOptions);
 
-        var regexcode = /self\.\s*(move|turn|get|say|toggle|build|show|attack|GetPlayerObject)\s*\(/g;
+        var regexcode = /self\.\s*(move|turn|get|say|toggle|build|show|attack|push)\s*\(/g;
         var originCode2 = originCode.replace(regexcode, '$1(');
-        var regexcode2 = /(move|turn|get|say|toggle|build|show|attack|GetPlayerObject)\s*\(/g;
+        var regexcode2 = /(move|turn|get|say|toggle|build|show|attack|push)\s*\(/g;
         originCode = originCode2.replace(regexcode2, 'self.$1(');
 
 // deal with loop =========================
@@ -212,27 +213,46 @@ var Unit = cc.Scale9Sprite.extend({
     },
 
     // function list
-    functionList: {
-        commandSequence: [],
+    initFunctionList: function () {
+        this.functionList =  {
+            commandSequence: [],
 
-        move: function (distance) {
-            // cc.log("i'm moving!" + distance);
-            this.commandSequence.push({
-                func: "do_move",
-                arguments: [distance]
-            });
-        },
+            move: function (distance) {
+                // cc.log("i'm moving!" + distance);
+                if (distance) {
+                    for (let i = 0; i < distance; i++) {
+                        this.commandSequence.push({
+                            func: "do_move",
+                            arguments: [distance]
+                        });
+                    }
+                } else {
+                    this.commandSequence.push({
+                        func: "do_move",
+                        arguments: [distance]
+                    });
+                }
+            },
 
-        turn: function (direction) {
-            this.commandSequence.push({
-                func: "do_turn",
-                arguments: [direction]
-            });
-        },
+            turn: function (direction) {
+                this.commandSequence.push({
+                    func: "do_turn",
+                    arguments: [direction]
+                });
+            },
+
+            push: function () {
+                this.commandSequence.push({
+                    func: "do_push",
+                    arguments: []
+                });
+            }
+        }
     },
 
     // function implementation
     do_move: function (distance) {
+        // not using distance
         cc.log("action: move " + distance);
         this.map.moveUnit(this);
     },
@@ -241,6 +261,11 @@ var Unit = cc.Scale9Sprite.extend({
         cc.log("action: turn " + direction);
         // this.turnToDirection(direction);
         this.turn(direction);
+    },
+
+    do_push: function () {
+        cc.log("action: push");
+        this.map.unitPush(this);
     }
 
 });

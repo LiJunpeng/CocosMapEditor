@@ -42,29 +42,29 @@ var EditorLayer = ccui.Layout.extend({
         this.editBox.setInputMode(cc.EDITBOX_INPUT_MODE_ANY);
         this.addChild(this.editBox,1);
 
-        // init start button
-        let menuItemRunCode = new cc.MenuItemImage(
-        	res.run_code_normal,
-        	res.run_code_pressed,
-        	this.runMap,
-        	this
-        );
-        menuItemRunCode.attr({
-        	anchorX: 0,
-        	anchorY: 0,
-        	x: 150,
-        	y: 0
-        });
-        this.menuItemRunCode = menuItemRunCode;
+        // // init start button
+        // let menuItemRunCode = new cc.MenuItemImage(
+        // 	res.run_code_normal,
+        // 	res.run_code_pressed,
+        // 	this.runMap,
+        // 	this
+        // );
+        // menuItemRunCode.attr({
+        // 	anchorX: 0,
+        // 	anchorY: 0,
+        // 	x: 150,
+        // 	y: 0
+        // });
+        // this.menuItemRunCode = menuItemRunCode;
 
-        let editorMenu = new cc.Menu(this.menuItemRunCode);
-        editorMenu.attr({
-        	anchorX: 0,
-        	anchorY: 0,
-        	x: 0,
-        	y: 0
-        });
-        this.addChild(editorMenu, 2);
+        // let editorMenu = new cc.Menu(this.menuItemRunCode);
+        // editorMenu.attr({
+        // 	anchorX: 0,
+        // 	anchorY: 0,
+        // 	x: 0,
+        // 	y: 0
+        // });
+        // this.addChild(editorMenu, 2);
 
 
 	},

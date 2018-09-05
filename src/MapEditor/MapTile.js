@@ -46,6 +46,16 @@ var MapTile = cc.Scale9Sprite.extend({
         this.addChild(this.item, 1);
     },
 
+    placeItemSprite: function (itemSprite) {
+        if (this.item == null || !this.item.canPlaceOn()) {
+            return false;
+        }
+
+        this.item.placeItemSprite(itemSprite);
+        
+        return true;
+    },
+
     deleteItem: function () {
         if (this.item) {
             this.removeChild(this.item);

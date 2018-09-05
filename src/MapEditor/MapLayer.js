@@ -59,7 +59,7 @@ var MapLayer = ccui.Layout.extend({
 
 	createEmptyMap: function (rowNum, colNum) {
 		if (this.mapContainer) {
-			this.removeChild(mapContainer);
+			this.removeChild(this.mapContainer);
 			this.mapContainer = null;
 		}
 
@@ -84,6 +84,15 @@ var MapLayer = ccui.Layout.extend({
 		}
 	},
 
+	resetMap: function () {
+		if (this.mapContainer) {
+			const rowNum = this.mapContainer.rowNum;
+			const colNum = this.mapContainer.colNum;
+			this.removeChild(this.mapContainer);
+			this.createEmptyMap(rowNum, colNum);
+		}
+	},
+
 	onMouseDown: function (e) {
 		// cc.log("mouse down");
 		let target = e.getCurrentTarget();
@@ -98,17 +107,37 @@ var MapLayer = ccui.Layout.extend({
 			// get mapX and mapY
 			const clickPos = target.mapContainer.getMapPosByCoord(e.getLocation());
 
-			if (target.itemMenu.itemSelected) {
-				// cc.log(target.itemMenu.itemSelected.item.id);
-				// let itemConfig = target.itemMenu.itemSelected.item;
-				let item = target.itemMenu.getSelectedItemInstance();
-				if (item) {
-					if (item.itemConfig.type == ITEM_TYPE.UNIT) {
-						target.mapContainer.placeUnit(clickPos.mapX, clickPos.mapY, item);
-					} else if (item.itemConfig.type == ITEM_TYPE.MOVABLE_TILE) {
-						target.mapContainer.placeItem(clickPos.mapX, clickPos.mapY, item);
+
+            // var button = event.getButton();
+            // if(button == cc.EventMouse.BUTTON_LEFT){            //左键
+            //     cc.log("左键按下", + pos.x + " " + pos.y);
+            // }else if(button == cc.EventMouse.BUTTON_RIGHT){     //右键
+            //     cc.log("右键按下", + pos.x + " " + pos.y);
+            // }else if(button == cc.EventMouse.BUTTON_MIDDLE){    //滚轮
+            //     cc.log("中间滚轮键按下");
+            // }
+
+            const button = e.getButton();
+
+            if (button == cc.EventMouse.BUTTON_LEFT) {
+            	//let mouse place
+				if (target.itemMenu.itemSelected) {
+					// cc.log(target.itemMenu.itemSelected.item.id);
+					// let itemConfig = target.itemMenu.itemSelected.item;
+					let item = target.itemMenu.getSelectedItemInstance();
+					if (item) {
+						if (item.itemConfig.type == ITEM_TYPE.UNIT) {
+							target.mapContainer.placeUnit(clickPos.mapX, clickPos.mapY, item);
+						} else if (item.itemConfig.type == ITEM_TYPE.MOVABLE_TILE) {
+							target.mapContainer.placeItem(clickPos.mapX, clickPos.mapY, item);
+						} else if (item.itemConfig.type == ITEM_TYPE.ITEM_SPRITE) {
+							target.mapContainer.placeItemSprite(clickPos.mapX, clickPos.mapY, item);
+						}
 					}
 				}
+			} else if (button == cc.EventMouse.BUTTON_RIGHT) {
+				// right mouse remove
+				target.mapContainer.removeOnMapPosXY(clickPos.mapX, clickPos.mapY);
 			}
 
 		} else {
@@ -310,6 +339,59 @@ var MapContainer = cc.Layer.extend({
         return true;
 	},
 
+	unitPush: function (unit) {
+		const direction = unit.facing;
+		let mapX = unit.getMapPos().mapX;
+		let mapY = unit.getMapPos().mapY;
+		let targetTile;
+		let nextTile;
+
+		// get target tile
+        switch (direction) {
+            case DIRECTION.UP:
+            case "up":
+            	targetTile = this.getTileByXY(mapX, mapY + 1);
+            	nextTile = this.getTileByXY(mapX, mapY + 2);
+                break;
+
+            case DIRECTION.DOWN:
+            case "down":
+            	targetTile = this.getTileByXY(mapX, mapY - 1);
+            	nextTile = this.getTileByXY(mapX, mapY - 2);
+                break;
+
+            case DIRECTION.LEFT:
+            case "left":
+            	targetTile = this.getTileByXY(mapX - 1, mapY);
+            	nextTile = this.getTileByXY(mapX - 2, mapY);
+                break;
+
+            case DIRECTION.RIGHT:
+            case "right":
+            	targetTile = this.getTileByXY(mapX + 1, mapY);
+            	nextTile = this.getTileByXY(mapX + 2, mapY);
+                break;    
+          
+            default:
+                break;  
+        } 
+
+    	if (
+    		targetTile &&
+    		targetTile.item &&
+    		targetTile.item.itemSprite &&
+    		nextTile &&
+    		nextTile.item &&
+    		nextTile.item.canPlaceOn()
+    	) {
+    		let itemPushing = targetTile.item.moveItemSpriteOut();
+    		nextTile.placeItemSprite(itemPushing);
+    		return true;
+    	}
+
+        return false;
+	},
+
 	moveUnitToXY: function () {
 
 	},
@@ -319,6 +401,33 @@ var MapContainer = cc.Layer.extend({
 		if (tile) {
 			tile.placeItem(item);
 		}
+	},
+
+	placeItemSprite: function (mapX, mapY, itemSprite) {
+		const tile = this.getTileByXY(mapX, mapY);
+		if (tile) {
+			tile.placeItemSprite(itemSprite);
+		}
+	},
+
+	removeOnMapPosXY: function (mapX, mapY) {
+		// remove unit
+		for (let i = 0; i < this.units.length; i++) {
+			let unit = this.units[i];
+			if (unit.mapX == mapX && unit.mapY == mapY) {
+				this.units.splice(i, 1);
+				unit.removeFromParent();
+				return true;
+			}
+		}
+
+		// remove item 
+		let tile = this.getTileByXY(mapX, mapY);
+		if (tile && tile.item) {
+			tile.deleteItem();
+		}
+
+		return false;
 	},
 
 	onExit: function () {
