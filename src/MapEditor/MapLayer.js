@@ -5,8 +5,8 @@ var MapLayer = ccui.Layout.extend({
 
 	mouseListener: null,
 
-
 	unboundPortal: null,
+	portalCount: 0,
 
 	ctor: function () {
 		this._super();
@@ -65,8 +65,14 @@ var MapLayer = ccui.Layout.extend({
     		const portalPlaced = event.getUserData().portal;
 
     		if (this.unboundPortal) {
+    			this.portalCount++;
+
     			this.unboundPortal.bindPortal(portalPlaced);
+    			this.unboundPortal.setPortalId(this.portalCount);
+
     			portalPlaced.bindPortal(this.unboundPortal);
+    			portalPlaced.setPortalId(this.portalCount);
+
     			this.unboundPortal = null;
     		} else {
     			this.unboundPortal = portalPlaced;
@@ -106,6 +112,8 @@ var MapLayer = ccui.Layout.extend({
 		if (this.mapContainer) {
 			this.removeChild(this.mapContainer);
 			this.mapContainer = null;
+			this.portalCount = 0;
+			this.unboundPortal = null;
 		}
 
 		let mapContainer = new MapContainer({
@@ -113,10 +121,10 @@ var MapLayer = ccui.Layout.extend({
 			colNum: colNum,
 			anchorX: 0,
 			anchorY: 0,
-			x: 400,
-			y: 200,
-			width: 600,
-			height: 600
+			x: 300,
+			y: 50,
+			width: 800,
+			height: 800
 		});
 		this.mapContainer = mapContainer;
 		this.addChild(mapContainer, 0);

@@ -2,6 +2,9 @@ var PortalItem = cc.Scale9Sprite.extend({
 
     itemConfig: null,
     itemSprite: null,
+    itemLabel: null,
+
+    portalId: null,
     pairedPortal: null,
     map: null,
 
@@ -15,6 +18,20 @@ var PortalItem = cc.Scale9Sprite.extend({
 
     onEnter:function () {
         this._super();
+
+
+        var itemLabel = new cc.LabelTTF("", "Arial", 24);
+        itemLabel.setColor(cc.color(120, 120, 200, 255))
+        itemLabel.attr({
+            anchorX: 0.5,
+            anchorY: 0.5,
+            x: this.width / 2,
+            y: this.height / 2
+        });
+        this.itemLabel = itemLabel;
+        this.addChild(itemLabel, 1);
+
+
 
         const eventPortalPlaced = new cc.EventCustom(MAP_EDITOR_SCENE_EVENT.PORTAL_PLACED);
         eventPortalPlaced.setUserData({
@@ -30,6 +47,11 @@ var PortalItem = cc.Scale9Sprite.extend({
 
     canPlaceOn: function () {
         return false;
+    },
+
+    setPortalId: function (id) {
+        this.portalId = id;
+        this.itemLabel.setString(this.portalId);
     },
 
     bindPortal: function (target) {
