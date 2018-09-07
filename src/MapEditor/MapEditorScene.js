@@ -8,7 +8,11 @@ DIRECTION = {
 
 var MAP_EDITOR_SCENE_EVENT = {
     RUN_MAP: "MAP_EDITOR_SCENE_EVENT_RUN_MAP",
-    RESET_MAP: "MAP_EDITOR_SCENE_EVENT_RESET_MAP"
+    RESET_MAP: "MAP_EDITOR_SCENE_EVENT_RESET_MAP",
+    PORTAL_PLACED: "MAP_EDITOR_SCENE_EVENT_PORTAL_PLACED",
+    PORTAL_REMOVED: "MAP_EDITOR_SCENE_EVENT_PORTAL_REMOVED",
+
+    UNIT_ARRIVING_POS: "MAP_EDITOR_SCENE_EVENT_UNIT_ARRIVING_POS"
 };
 
 var MapEditorScene = cc.Scene.extend({
@@ -100,7 +104,7 @@ var MapEditorScene = cc.Scene.extend({
 
         }.bind(this));
 
-
+// cc.log("tset");
 
 		this.mapLayer.createEmptyMap(14, 14);
 		// this.mapLayer.mapContainer.placeItem(3, 3, new MovableItem());

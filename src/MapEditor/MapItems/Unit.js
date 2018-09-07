@@ -25,6 +25,8 @@ var Unit = cc.Scale9Sprite.extend({
     },
 
     update: function () {
+        // this.checkPos();
+
         if (!this.isRunning || this.isExecuting) {
             return;
         }
@@ -41,6 +43,18 @@ var Unit = cc.Scale9Sprite.extend({
         this._super();
 
 
+    },
+
+    checkPos: function () {
+        // generate movein moveout event
+    },
+
+    onArrivingPos: function () {
+        const eventUnitArrivingPos = new cc.EventCustom(MAP_EDITOR_SCENE_EVENT.UNIT_ARRIVING_POS);
+        eventUnitArrivingPos.setUserData({
+            unit: this
+        });
+        cc.eventManager.dispatchEvent(eventUnitArrivingPos);
     },
 
     getMapPos: function () {

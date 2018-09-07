@@ -3,7 +3,8 @@ ITEM_TYPE = {
 	UNIT: 0,
 	MOVABLE_TILE: 1,
 	ITEM_SPRITE: 2,
-	WAY_POINT_TILE: 3
+	PORTAL_TILE: 3,
+	WAY_POINT_TILE: 4
 };
 
 ITEM_CONFIG = [
@@ -34,6 +35,17 @@ ITEM_CONFIG = [
 		name: "box",
 		type: ITEM_TYPE.ITEM_SPRITE,
 		res: "menu_item_box_1"
+	},
+
+	{
+		id: 4,
+		name: "portal",
+		type: ITEM_TYPE.PORTAL_TILE,
+		res: "menu_item_portal"
 	}
 
 ];
+
+
+
+

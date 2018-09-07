@@ -48,7 +48,7 @@ var ItemMenu = ccui.Layout.extend({
 
 	loadItems: function (items) {
 
-		this.scrollView.setInnerContainerSize(this.width, items.length * (this.width + 20));
+		this.scrollView.setInnerContainerSize(this.scrollView.width, items.length * (this.scrollView.width + 40));
 		for (let i = 0; i < items.length; i++) {
 			let item = new menuItem(items[i]);
 			item.attr({
@@ -133,6 +133,10 @@ var ItemMenu = ccui.Layout.extend({
 				return this.buildItemSprite(itemConfig);
 				break;
 
+			case ITEM_TYPE.PORTAL_TILE:
+				return this.buildPortalTile(itemConfig);
+				break;
+
 			default:
 				return null;
 				break;
@@ -150,6 +154,10 @@ var ItemMenu = ccui.Layout.extend({
 
 	buildItemSprite: function (itemConfig) {
 		return new ItemSprite(itemConfig);
+	},
+
+	buildPortalTile: function (itemConfig) {
+		return new PortalItem(itemConfig);
 	},
 
 	onExit: function () {

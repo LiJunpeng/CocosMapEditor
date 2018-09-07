@@ -3,6 +3,7 @@ var MovableItem = cc.Scale9Sprite.extend({
     itemConfig: null,
 
     itemSprite: null,
+    map: null,
 
     ctor: function (itemConfig) {
         this._super(res.movable_item);

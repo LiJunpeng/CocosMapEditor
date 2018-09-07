@@ -5,6 +5,9 @@ var MapLayer = ccui.Layout.extend({
 
 	mouseListener: null,
 
+
+	unboundPortal: null,
+
 	ctor: function () {
 		this._super();
 
@@ -55,6 +58,48 @@ var MapLayer = ccui.Layout.extend({
     	});
     	this.mouseListener = mouseListener;
     	cc.eventManager.addListener(mouseListener, this);
+
+    	// listening to portal placement
+    	cc.eventManager.addCustomListener(MAP_EDITOR_SCENE_EVENT.PORTAL_PLACED, function (event) {
+    		cc.log("portal placed");
+    		const portalPlaced = event.getUserData().portal;
+
+    		if (this.unboundPortal) {
+    			this.unboundPortal.bindPortal(portalPlaced);
+    			portalPlaced.bindPortal(this.unboundPortal);
+    			this.unboundPortal = null;
+    		} else {
+    			this.unboundPortal = portalPlaced;
+    		}
+
+    	}.bind(this));
+
+    	cc.eventManager.addCustomListener(MAP_EDITOR_SCENE_EVENT.PORTAL_REMOVED, function (event) {
+    		cc.log("portal removed");
+    		const portalRemoved = event.getUserData().portal;
+
+    		if (portalRemoved.pairedPortal) {
+    			const pairedPortal = portalRemoved.pairedPortal;
+    			pairedPortal.unbindPortal();
+    			pairedPortal.parent.deleteItem();
+    		} else {
+    			this.unboundPortal = null;
+    		}
+
+    	}.bind(this));
+
+
+    	// in-game event
+    	cc.eventManager.addCustomListener(MAP_EDITOR_SCENE_EVENT.UNIT_ARRIVING_POS, function (event) {
+    		cc.log("unit arrival");
+    		const unit = event.getUserData().unit;
+
+    		const tile = this.mapContainer.getTileByXY(unit.mapX, unit.mapY);
+    		if (tile.item && tile.item.onArrival) {
+    			tile.item.onArrival(unit);
+    		}
+
+    	}.bind(this));
 	},
 
 	createEmptyMap: function (rowNum, colNum) {
@@ -132,6 +177,17 @@ var MapLayer = ccui.Layout.extend({
 							target.mapContainer.placeItem(clickPos.mapX, clickPos.mapY, item);
 						} else if (item.itemConfig.type == ITEM_TYPE.ITEM_SPRITE) {
 							target.mapContainer.placeItemSprite(clickPos.mapX, clickPos.mapY, item);
+						} else if (item.itemConfig.type == ITEM_TYPE.PORTAL_TILE) {
+							target.mapContainer.placeItem(clickPos.mapX, clickPos.mapY, item);
+
+							// // bind portal
+							// if (target.unboundPortal) {
+							// 	target.unboundPortal.bindPortal(item);
+							// 	item.bindPortal(target.unboundPortal);
+							// 	target.unboundPortal = null;
+							// } else {
+							// 	target.unboundPortal = item;
+							// }
 						}
 					}
 				}
@@ -163,6 +219,11 @@ var MapLayer = ccui.Layout.extend({
 		cc.log("Leave UILayer");
 
 	 	cc.eventManager.removeListener(this.mouseListener);
+	 	cc.eventManager.removeCustomListners(MAP_EDITOR_SCENE_EVENT.PORTAL_PLACED);
+	 	cc.eventManager.removeCustomListners(MAP_EDITOR_SCENE_EVENT.PORTAL_REMOVED);
+
+		cc.eventManager.removeCustomListners(MAP_EDITOR_SCENE_EVENT.UNIT_ARRIVING_POS);
+
 	}
 });
 
@@ -286,6 +347,13 @@ var MapContainer = cc.Layer.extend({
 
 	},
 
+	portUnitTo: function (portal, unit) {
+		const portalX = portal.parent.mapX;
+		const portalY = portal.parent.mapY;
+		this.moveUnitToXY(unit, portalX, portalY);
+		portal.onPortIn(unit);
+	},
+
 	moveUnit: function (unit) {
 		const direction = unit.facing;
 		let mapX = unit.getMapPos().mapX;
@@ -332,6 +400,7 @@ var MapContainer = cc.Layer.extend({
 				cc.callFunc(function () {
 					this.isExecuting = false;
 					this.setMapPos(mapX, mapY);
+					this.onArrivingPos();
 				}, unit)
            	)
        	);
@@ -392,14 +461,18 @@ var MapContainer = cc.Layer.extend({
         return false;
 	},
 
-	moveUnitToXY: function () {
-
+	moveUnitToXY: function (unit, mapX, mapY) {
+		const tile = this.getTileByXY(mapX, mapY);
+		unit.x = tile.x + tile.width / 2;
+		unit.y = tile.y + tile.height / 2;
+		unit.setMapPos(mapX, mapY);
 	},
 
 	placeItem: function (mapX, mapY, item) {
 		const tile = this.getTileByXY(mapX, mapY);
 		if (tile) {
 			tile.placeItem(item);
+			item.map = this;
 		}
 	},
 
